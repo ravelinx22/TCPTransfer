@@ -48,8 +48,10 @@ public class TCPClient extends Thread {
         byte[] bytes = new byte[16*1024];
        
         int count;
+        int i = 0;
         while ((count = in.read(bytes)) > 0) {
             out.write(bytes, 0, count);
+            System.out.println(count+ " " + i++);
         }
 
         out.close();

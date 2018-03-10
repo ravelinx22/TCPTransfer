@@ -63,6 +63,12 @@ public class TCPServer  extends Thread {
         InputStream in = new FileInputStream(file);
         OutputStream out = clientSock.getOutputStream();
 
+		//TODO Message size
+		//        int count;
+		//        while ((count = in.read(bytes, 0, 8000)) > 0) {
+		//            out.write(bytes, 0, count);
+		//        }
+
         int count;
         while ((count = in.read(bytes)) > 0) {
             out.write(bytes, 0, count);
