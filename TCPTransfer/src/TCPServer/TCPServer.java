@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,6 +14,7 @@ import java.net.Socket;
 import TCPClient.TCPClient;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 
 
@@ -32,7 +34,8 @@ public class TCPServer  extends Thread {
 	/* Constructor */
 	public TCPServer(int port) {
 		try {
-			ss = new ServerSocket(port);
+			// TODO: Set maximum number of connections
+			ss = new ServerSocket(port,10);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -43,7 +46,8 @@ public class TCPServer  extends Thread {
 		while (true) {
 			try {
 				Socket clientSock = ss.accept();
-				sendFile("./data/cat.jpg", clientSock);
+				// TODO: Change file
+				sendFile("./data/45MB.zip", clientSock);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -51,17 +55,22 @@ public class TCPServer  extends Thread {
 	}
 
 	/* Methods */
-	public void sendFile(String file, Socket clientSock) throws IOException {
-		DataOutputStream dos = new DataOutputStream(clientSock.getOutputStream());
-		FileInputStream fis = new FileInputStream(file);
-		byte[] buffer = new byte[4096];
-		
-		while (fis.read(buffer) > 0) {
-			dos.write(buffer);
-		}
-		
-		fis.close();
-		dos.close();
+	public void sendFile(String fileUrl, Socket clientSock) throws IOException {		
+        File file = new File(fileUrl);
+        
+        // TODO: Buffer size
+        byte[] bytes = new byte[16 * 1024];
+        InputStream in = new FileInputStream(file);
+        OutputStream out = clientSock.getOutputStream();
+
+        int count;
+        while ((count = in.read(bytes)) > 0) {
+            out.write(bytes, 0, count);
+        }
+        
+        out.close();
+        in.close();
+        clientSock.close();
 	}
 	
 	/* Main */

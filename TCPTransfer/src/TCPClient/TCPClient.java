@@ -3,6 +3,8 @@ package TCPClient;
 import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,7 +28,7 @@ public class TCPClient extends Thread {
 	private Socket s;
 	
 	/* Constructors */
-	public TCPClient(String host, int port, String file) {
+	public TCPClient(String host, int port) {
 		try {
 			s = new Socket(host, port);
 			saveFile(s);
@@ -37,27 +39,27 @@ public class TCPClient extends Thread {
 	
 	/* Methods */
 	private void saveFile(Socket clientSock) throws IOException {
-		DataInputStream dis = new DataInputStream(clientSock.getInputStream());
-		FileOutputStream fos = new FileOutputStream("./data/testfile.jpg");
-		byte[] buffer = new byte[4096];
-		
-		int filesize = 15123; // Send file size in separate msg
-		int read = 0;
-		int totalRead = 0;
-		int remaining = filesize;
-		while((read = dis.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-			totalRead += read;
-			remaining -= read;
-			System.out.println("read " + totalRead + " bytes.");
-			fos.write(buffer, 0, read);
-		}
-		
-		fos.close();
-		dis.close();
+        InputStream in = null;
+        OutputStream out = null;
+        in = clientSock.getInputStream();
+        out = new FileOutputStream("./data/copy.zip");
+
+        // TODO: Change buffer size
+        byte[] bytes = new byte[16*1024];
+       
+        int count;
+        while ((count = in.read(bytes)) > 0) {
+            out.write(bytes, 0, count);
+        }
+
+        out.close();
+        in.close();
+        clientSock.close();
 	}
 	
 	/* Main */
 	public static void main(String[] args) {
-		TCPClient fc = new TCPClient("localhost", 1988, "./data/cat.jpg");
+		// TODO: Cambiar host
+		TCPClient fc = new TCPClient("localhost", 1988);
 	}
 }
