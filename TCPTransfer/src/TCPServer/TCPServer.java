@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 import TCPClient.TCPClient;
 
@@ -30,7 +31,7 @@ public class TCPServer  extends Thread {
 	
 	/* Attributes */
 	private ServerSocket ss;
-	
+		
 	/* Constructor */
 	public TCPServer(int port) {
 		try {
@@ -47,7 +48,8 @@ public class TCPServer  extends Thread {
 			try {
 				Socket clientSock = ss.accept();
 				// TODO: Change file
-				sendFile("./data/45MB.zip", clientSock);
+//				sendFile("./data/45MB.zip", clientSock);
+				sendFile(clientSock);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -55,8 +57,18 @@ public class TCPServer  extends Thread {
 	}
 
 	/* Methods */
-	public void sendFile(String fileUrl, Socket clientSock) throws IOException {		
-        File file = new File(fileUrl);
+	public void sendFile(Socket clientSock) throws IOException {
+		Scanner sc = new Scanner(clientSock.getInputStream());
+		String size = sc.nextLine();
+		System.out.println(size);
+		
+		File file = null;
+		if(size.equals(LARGE_FILE))
+			file = new File("./data/45MB.zip");
+		else if(size.equals(MEDIUM_FILE))
+			file = new File("./data/15MB.zip");
+		else if(size.equals(SMALL_FILE))
+			file = new File("./data/3MB.zip");
         
         // TODO: Buffer size
         byte[] bytes = new byte[16 * 1024];
@@ -70,6 +82,7 @@ public class TCPServer  extends Thread {
 		 out.write(bytes, 0, count);
 		}
 
+		sc.close();
         out.close();
         in.close();
         clientSock.close();

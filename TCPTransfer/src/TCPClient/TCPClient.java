@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,32 +32,52 @@ public class TCPClient extends Thread {
 	public TCPClient(String host, int port) {
 		try {
 			s = new Socket(host, port);
-			saveFile(s);
+			//saveFile(s);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 	}
 	
 	/* Methods */
-	private void saveFile(Socket clientSock) throws IOException {
+	private void saveFile(Socket clientSock, String size) throws IOException {
         InputStream in = null;
-        OutputStream out = null;
+        OutputStream fOut = null;
+        PrintStream p = new PrintStream(clientSock.getOutputStream());
+        p.println(size);
+        
         in = clientSock.getInputStream();
-        out = new FileOutputStream("./data/copy.zip");
-
+        
+        if(size.equals(LARGE_FILE))
+        	fOut = new FileOutputStream("./data/copy45MB.zip");
+        else if(size.equals(MEDIUM_FILE))
+        	fOut = new FileOutputStream("./data/copy15MB.zip");
+        else if(size.equals(SMALL_FILE))
+        	fOut = new FileOutputStream("./data/copy3MB.zip");
         // TODO: Change buffer size
         byte[] bytes = new byte[16*1024];
        
         int count;
         int i = 0;
         while ((count = in.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
+            fOut.write(bytes, 0, count);
             System.out.println(count+ " " + i++);
         }
-
-        out.close();
+        p.close();
+        fOut.close();
         in.close();
         clientSock.close();
+	}
+	
+	public void sendFileSize(String size) throws IOException {
+		saveFile(s, size);
+	}
+	
+	public void stopConnection() {
+		try {
+			s.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/* Main */
