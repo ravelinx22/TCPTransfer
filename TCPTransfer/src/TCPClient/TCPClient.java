@@ -83,6 +83,6 @@ public class TCPClient extends Thread {
 	/* Main */
 	public static void main(String[] args) {
 		// TODO: Cambiar host
-		TCPClient fc = new TCPClient("localhost", 1988);
+		TCPClient fc = new TCPClient("52.203.207.37", 1988);
 	}
 }

@@ -68,7 +68,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		panelConexion.setBorder(new TitledBorder("Conexion"));
 		panelConexion.setLayout(new GridLayout(1, 6));
 
-		JTextField host = new JTextField("localhost");
+		JTextField host = new JTextField("52.203.207.37");
 		JTextField puerto = new JTextField(""+1988);
 		estado = new JTextField("Desconectado");
 
@@ -133,13 +133,25 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 	}	
 
 	public void iniciarDescarga() throws IOException {
-		fc = new TCPClient("localhost", 1988);
-		if(largeFileSelector.isSelected())
-			fc.sendFileSize(LARGE_FILE);
-		else if(mediumFileSelector.isSelected())
-			fc.sendFileSize(MEDIUM_FILE);
-		else if(smallFileSelector.isSelected())
-			fc.sendFileSize(SMALL_FILE);
+		class Ayuda extends Thread {
+			public void run()  {
+				try {
+				fc = new TCPClient("52.203.207.37", 1988);
+				if(largeFileSelector.isSelected())
+					fc.sendFileSize(LARGE_FILE);
+				else if(mediumFileSelector.isSelected())
+					fc.sendFileSize(MEDIUM_FILE);
+				else if(smallFileSelector.isSelected())
+					fc.sendFileSize(SMALL_FILE);
+				
+				refrescar();
+				estado.setText("Desconectado");
+				}
+				catch(Exception e){}
+			}
+		}
+		
+		(new Ayuda()).start();
 	}
 
 	@Override
@@ -155,13 +167,14 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 			try {
 				estado.setText("Conectado");
 				iniciarDescarga();
-				refrescar();
-				estado.setText("Desconectado");
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		else if(arg0.getActionCommand().equals(DETENER)) {
 			fc.stopConnection();
+			estado.setText("Desconectado");
+
 		}
 
 		else if(arg0.getActionCommand().equals(LARGE_FILE)) {
