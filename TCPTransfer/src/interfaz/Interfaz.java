@@ -2,6 +2,7 @@ package interfaz;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,9 +55,10 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 
 
 	public Interfaz() {
+		setLocationRelativeTo(null);
 
 		setTitle( "TCP Cliente" );
-		setSize( 750, 700 );
+		setSize( 600, 300 );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );
 		setResizable(false);
 		setLayout(new BorderLayout());
@@ -84,7 +86,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 
 		JPanel panelArchivos = new JPanel();
 		panelArchivos.setBorder(new TitledBorder("Seleccionar archivo:"));
-		panelArchivos.setLayout(new GridLayout(4, 2));
+		panelArchivos.setLayout(new GridLayout(4, 1));
 
 		largeFileSelector = new JRadioButton("Large File");
 		largeFileSelector.setActionCommand(LARGE_FILE);
@@ -96,31 +98,29 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		smallFileSelector.setActionCommand(SMALL_FILE);
 		smallFileSelector.addActionListener(this);
 
+		JPanel panelBotones = new JPanel();
+		panelBotones.setLayout(new GridLayout(1, 2));
 		descargar = new JButton("Empezar descarga");
-		descargar.setSize(new Dimension(10, 40));
 		descargar.setActionCommand(DESCARGAR);
 		descargar.addActionListener(this);
 		detener = new JButton("Detener descarga");
-		detener.setSize(new Dimension(10, 40));
 		detener.setActionCommand(DETENER);
 		detener.addActionListener(this);
 
 
 		panelArchivos.add(largeFileSelector);
-		panelArchivos.add(new JLabel());
 		panelArchivos.add(mediumFileSelector);
-		panelArchivos.add(new JLabel());
 		panelArchivos.add(smallFileSelector);
-		panelArchivos.add(new JLabel());
-		panelArchivos.add(descargar);
-		panelArchivos.add(detener);
+		panelBotones.add(descargar);
+		panelBotones.add(detener);
+		panelArchivos.add(panelBotones);
 
 
 		JPanel panelDescargas = new JPanel();
 		listaArchivos = new JList<>();
 		listaArchivos.addListSelectionListener(this);
 		scroll = new JScrollPane( listaArchivos );
-		scroll.setPreferredSize( new Dimension( 250, 200 ) );
+		scroll.setPreferredSize( new Dimension( 250, 185 ) );
 		panelDescargas.setBorder(new TitledBorder("Decargas"));
 		panelDescargas.add( scroll, BorderLayout.CENTER );
 
