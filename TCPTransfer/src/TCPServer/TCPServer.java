@@ -47,6 +47,7 @@ public class TCPServer  extends Thread {
 		while (true) {
 			try {
 				Socket clientSock = ss.accept();
+				System.out.println("Se conecto un cliente");
 				// TODO: Change file
 //				sendFile("./data/45MB.zip", clientSock);
 				sendFile(clientSock);
@@ -58,34 +59,38 @@ public class TCPServer  extends Thread {
 
 	/* Methods */
 	public void sendFile(Socket clientSock) throws IOException {
-		Scanner sc = new Scanner(clientSock.getInputStream());
-		String size = sc.nextLine();
-		System.out.println(size);
-		
-		File file = null;
-		if(size.equals(LARGE_FILE))
-			file = new File("./data/45MB.zip");
-		else if(size.equals(MEDIUM_FILE))
-			file = new File("./data/15MB.zip");
-		else if(size.equals(SMALL_FILE))
-			file = new File("./data/3MB.zip");
-        
-        // TODO: Buffer size
-        byte[] bytes = new byte[16 * 1024];
-        InputStream in = new FileInputStream(file);
-        OutputStream out = clientSock.getOutputStream();
+        try {
+    		Scanner sc = new Scanner(clientSock.getInputStream());
+    		String size = sc.nextLine();
+    		System.out.println(size);
+    		
+    		File file = null;
+    		if(size.equals(LARGE_FILE))
+    			file = new File("./data/45MB.zip");
+    		else if(size.equals(MEDIUM_FILE))
+    			file = new File("./data/15MB.zip");
+    		else if(size.equals(SMALL_FILE))
+    			file = new File("./data/3MB.zip");
+            
+            // TODO: Buffer size
+            byte[] bytes = new byte[16 * 1024];
+            InputStream in = new FileInputStream(file);
+            OutputStream out = clientSock.getOutputStream();
 
-		// TODO: Message size
-		int messageSize = 8000;
-		int count;
-		while ((count = in.read(bytes, 0, messageSize)) > 0) {
-		 out.write(bytes, 0, count);
-		}
-
-		sc.close();
-        out.close();
-        in.close();
-        clientSock.close();
+    		// TODO: Message size
+    		int messageSize = 8000;
+    		int count;
+    		while ((count = in.read(bytes, 0, messageSize)) > 0) {
+    		 out.write(bytes, 0, count);
+    		}
+    		
+    		sc.close();
+            out.close();
+            in.close();
+            clientSock.close();
+        } catch(Exception e) {
+        	System.out.println("Error");
+        }
 	}
 	
 	/* Main */
