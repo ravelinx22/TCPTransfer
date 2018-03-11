@@ -50,6 +50,20 @@ public class TCPServer  extends Thread {
 				System.out.println("Se conecto un cliente");
 				// TODO: Change file
 //				sendFile("./data/45MB.zip", clientSock);
+				(new Atender(clientSock)).start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	class Atender extends Thread{
+		Socket clientSock;
+		public Atender(Socket clientSock) {
+			this.clientSock = clientSock;
+		}
+		public void run () {
+			try {
 				sendFile(clientSock);
 			} catch (IOException e) {
 				e.printStackTrace();

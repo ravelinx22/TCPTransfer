@@ -171,9 +171,9 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		if (arg0.getActionCommand().equals(CONECTAR))
 		{
 			if(conectar.getText().equals("Conectar")) {
-			estado.setText("Conectado");
-			fc = new TCPClient("52.203.207.37", 1988);
-			conectar.setText("Desconectar");
+				estado.setText("Conectado");
+				fc = new TCPClient("localhost", 1988);
+				conectar.setText("Desconectar");
 			}
 			else {
 				estado.setText("Desconectado");
