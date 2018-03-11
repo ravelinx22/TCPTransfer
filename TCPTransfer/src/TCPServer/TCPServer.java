@@ -59,6 +59,7 @@ public class TCPServer  extends Thread {
 	/* Methods */
 	public void sendFile(Socket clientSock) throws IOException {
 		Scanner sc = new Scanner(clientSock.getInputStream());
+		//POR ACA
 		String size = sc.nextLine();
 		System.out.println(size);
 		

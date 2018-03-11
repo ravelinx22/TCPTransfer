@@ -50,6 +50,8 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 	JRadioButton mediumFileSelector;
 	JRadioButton smallFileSelector;
 
+	JButton conectar;
+
 	JTextField estado;
 
 
@@ -58,7 +60,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		setLocationRelativeTo(null);
 
 		setTitle( "TCP Cliente" );
-		setSize( 600, 300 );
+		setSize( 780, 300 );
 		setDefaultCloseOperation( EXIT_ON_CLOSE );
 		setResizable(false);
 		setLayout(new BorderLayout());
@@ -66,11 +68,14 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 
 		JPanel panelConexion = new JPanel();
 		panelConexion.setBorder(new TitledBorder("Conexion"));
-		panelConexion.setLayout(new GridLayout(1, 6));
+		panelConexion.setLayout(new GridLayout(1, 7));
 
 		JTextField host = new JTextField("52.203.207.37");
 		JTextField puerto = new JTextField(""+1988);
 		estado = new JTextField("Desconectado");
+		conectar = new JButton("Conectar");
+		conectar.addActionListener(this);
+		conectar.setActionCommand(CONECTAR);
 
 
 		host.setEditable(false);
@@ -83,6 +88,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		panelConexion.add(puerto);
 		panelConexion.add(new JLabel("Estado:"));
 		panelConexion.add(estado);
+		panelConexion.add(conectar);
 
 		JPanel panelArchivos = new JPanel();
 		panelArchivos.setBorder(new TitledBorder("Seleccionar archivo:"));
@@ -136,21 +142,20 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		class Ayuda extends Thread {
 			public void run()  {
 				try {
-				fc = new TCPClient("52.203.207.37", 1988);
-				if(largeFileSelector.isSelected())
-					fc.sendFileSize(LARGE_FILE);
-				else if(mediumFileSelector.isSelected())
-					fc.sendFileSize(MEDIUM_FILE);
-				else if(smallFileSelector.isSelected())
-					fc.sendFileSize(SMALL_FILE);
-				
-				refrescar();
-				estado.setText("Desconectado");
+					if(largeFileSelector.isSelected())
+						fc.sendFileSize(LARGE_FILE);
+					else if(mediumFileSelector.isSelected())
+						fc.sendFileSize(MEDIUM_FILE);
+					else if(smallFileSelector.isSelected())
+						fc.sendFileSize(SMALL_FILE);
+
+					refrescar();
+					estado.setText("Desconectado");
 				}
 				catch(Exception e){}
 			}
 		}
-		
+
 		(new Ayuda()).start();
 	}
 
@@ -163,9 +168,22 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		if(arg0.getActionCommand().equals(DESCARGAR))
+		if (arg0.getActionCommand().equals(CONECTAR))
+		{
+			if(conectar.getText().equals("Conectar")) {
+			estado.setText("Conectado");
+			fc = new TCPClient("52.203.207.37", 1988);
+			conectar.setText("Desconectar");
+			}
+			else {
+				estado.setText("Desconectado");
+				fc.stopConnection();
+				fc = null;
+				conectar.setText("Conectar");
+			}
+		}
+		else if(arg0.getActionCommand().equals(DESCARGAR))
 			try {
-				estado.setText("Conectado");
 				iniciarDescarga();
 
 			} catch (IOException e) {
@@ -173,7 +191,6 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 			}
 		else if(arg0.getActionCommand().equals(DETENER)) {
 			fc.stopConnection();
-			estado.setText("Desconectado");
 
 		}
 
@@ -193,25 +210,25 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 
 	public void refrescar( )
 	{
-        ArrayList<String> archivos = new ArrayList( );
+		ArrayList<String> archivos = new ArrayList( );
 
-        // Saca la lista de archivos de directorio
-        File directorio = new File( "./data" );
-        File[] elementos = directorio.listFiles( );
-        if( elementos != null )
-        {
-            for( int i = 0; i < elementos.length; i++ )
-            {
-                // Verifica si es directorio o si es archivo
+		// Saca la lista de archivos de directorio
+		File directorio = new File( "./data" );
+		File[] elementos = directorio.listFiles( );
+		if( elementos != null )
+		{
+			for( int i = 0; i < elementos.length; i++ )
+			{
+				// Verifica si es directorio o si es archivo
 
-                if( elementos[ i ].isFile( ) )
-                {
-                	int k = elementos[ i ].getAbsolutePath( ).lastIndexOf(File.separator);
-                    archivos.add( elementos[ i ].getAbsolutePath( ).substring(k+1));
-                }
-            }
-        }
-        
+				if( elementos[ i ].isFile( ) )
+				{
+					int k = elementos[ i ].getAbsolutePath( ).lastIndexOf(File.separator);
+					archivos.add( elementos[ i ].getAbsolutePath( ).substring(k+1));
+				}
+			}
+		}
+
 		listaArchivos.setListData( archivos.toArray() );
 	}
 

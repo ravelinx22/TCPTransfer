@@ -80,6 +80,10 @@ public class TCPClient extends Thread {
 		}
 	}
 	
+	public boolean socketClosed() {
+		return s.isClosed();
+	}
+	
 	/* Main */
 	public static void main(String[] args) {
 		// TODO: Cambiar host
