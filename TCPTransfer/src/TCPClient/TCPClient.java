@@ -83,10 +83,5 @@ public class TCPClient extends Thread {
 	public boolean socketClosed() {
 		return s.isClosed();
 	}
-	
-	/* Main */
-	public static void main(String[] args) {
-		// TODO: Cambiar host
-		TCPClient fc = new TCPClient("52.203.207.37", 1988);
-	}
+
 }
