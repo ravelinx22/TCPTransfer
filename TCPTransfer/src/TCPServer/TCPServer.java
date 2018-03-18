@@ -91,12 +91,17 @@ public class TCPServer  extends Thread {
             InputStream in = new FileInputStream(file);
             OutputStream out = clientSock.getOutputStream();
 
+            System.out.println("Se empezo a enviar archivo");
+            long initTime = System.currentTimeMillis();
     		// TODO: Message size
     		int messageSize = 8000;
     		int count;
     		while ((count = in.read(bytes, 0, messageSize)) > 0) {
     		 out.write(bytes, 0, count);
     		}
+    		long totalTime = System.currentTimeMillis() - initTime;
+    		System.out.println("Se termino de enviar archivo");
+    		System.out.println("Enviar el archivo tomo " + totalTime + " ms");
     		
     		sc.close();
             out.close();
