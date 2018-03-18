@@ -18,6 +18,9 @@ public class TCPClient extends Thread {
 	// 45MB
 	private final static String SMALL_FILE = "SMALL_FILE";
 	
+	// TODO: Size setup
+	private final static int BUFFER_SIZE = 16;
+	
 	/* Attributes */
 	private Socket s;
 	
@@ -56,7 +59,7 @@ public class TCPClient extends Thread {
         else if(size.equals(SMALL_FILE))
         	fOut = new FileOutputStream("./data/copySmall.zip");
         // TODO: Change buffer size
-        byte[] bytes = new byte[16*1024];
+        byte[] bytes = new byte[BUFFER_SIZE*1024];
        
         System.out.println("Starting to read file");
         int count;
@@ -100,5 +103,38 @@ public class TCPClient extends Thread {
 	public boolean socketClosed() {
 		return s.isClosed();
 	}
-
+	
+	/* Main */
+	public static void main(String args[]) throws Exception {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Escoger dirección IP del servidor:");
+		String address = sc.nextLine();
+		System.out.println("Escoger puerto:");
+		int port = sc.nextInt();
+		
+		System.out.println("Choose file size: ");
+		System.out.println("1. SMALL FILE");
+		System.out.println("2. MEDIUM FILE");
+		System.out.println("3. LARGE FILE");
+		int option = -1;
+		
+		while(option <= 0 || option > 3) {
+			System.out.println("Ingrese la opcion: ");
+			option = sc.nextInt();
+		}
+		
+		String size = SMALL_FILE;
+		
+		if(option == 2) {
+			size = MEDIUM_FILE;
+		} else if(option == 3) {
+			size = LARGE_FILE;
+		}
+		
+		System.out.println("Selected: " + size);
+		
+		sc.close();
+		TCPClient tcpClient = new TCPClient(address, port);
+		tcpClient.sendFileSize(size);
+	}
 }

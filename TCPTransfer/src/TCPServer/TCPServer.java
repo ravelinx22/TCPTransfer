@@ -21,6 +21,10 @@ public class TCPServer  extends Thread {
 	// 45MB
 	private final static String SMALL_FILE = "SMALL_FILE";
 	
+	// TODO: Size setup
+	private final static int BUFFER_SIZE = 16;
+	private final static int MESSAGE_SIZE = 8000;
+	
 	/* Attributes */
 	private ServerSocket ss;
 		
@@ -88,10 +92,7 @@ public class TCPServer  extends Thread {
     		String confirmation = sc.nextLine();
     		System.out.println(confirmation);
     		
-            // TODO: Buffer size
-            byte[] bytes = new byte[16 * 1024];
-    		// TODO: Message size
-    		int messageSize = 8000;
+            byte[] bytes = new byte[BUFFER_SIZE * 1024];    	
             
             InputStream in = new FileInputStream(file);
             OutputStream out = clientSock.getOutputStream();            
@@ -101,7 +102,7 @@ public class TCPServer  extends Thread {
 
             int accumulativeSize = 0;
     		int count;
-    		while ((count = in.read(bytes, 0, messageSize)) > 0) {
+    		while ((count = in.read(bytes, 0, MESSAGE_SIZE)) > 0) {
     			accumulativeSize += count;
     		 out.write(bytes, 0, count);
     		}
@@ -120,15 +121,11 @@ public class TCPServer  extends Thread {
 	
 	public int getRealFileSize(File file) throws Exception {
         InputStream in = new FileInputStream(file);
-        
-        // TODO: Buffer size
-        byte[] bytes = new byte[16 * 1024];
-		// TODO: Message size
-		int messageSize = 8000;
-		
-		int count = 0;
+        byte[] bytes = new byte[BUFFER_SIZE * 1024];
+
+        int count = 0;
 		int acumulativeSize = 0;
-		while ((count = in.read(bytes, 0, messageSize)) > 0) {
+		while ((count = in.read(bytes, 0, MESSAGE_SIZE)) > 0) {
    		 	acumulativeSize += count;
    		}
 		
@@ -137,7 +134,7 @@ public class TCPServer  extends Thread {
 	
 	/* Main */
 	public static void main(String[] args) {
-		TCPServer fs = new TCPServer(1988);
+		TCPServer fs = new TCPServer(Integer.parseInt(args[0]));
 		fs.start();
 	}
 	
