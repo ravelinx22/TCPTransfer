@@ -53,11 +53,11 @@ public class TCPClient extends Thread {
         
         
         if(size.equals(LARGE_FILE))
-        	fOut = new FileOutputStream("./data/copyLarge.zip");
+        	fOut = new FileOutputStream("./copyLarge.zip");
         else if(size.equals(MEDIUM_FILE))
-        	fOut = new FileOutputStream("./data/copyMedium.zip");
+        	fOut = new FileOutputStream("./copyMedium.zip");
         else if(size.equals(SMALL_FILE))
-        	fOut = new FileOutputStream("./data/copySmall.zip");
+        	fOut = new FileOutputStream("./copySmall.zip");
         // TODO: Change buffer size
         byte[] bytes = new byte[BUFFER_SIZE*1024];
        

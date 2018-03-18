@@ -77,11 +77,11 @@ public class TCPServer  extends Thread {
     		
     		File file = null;
     		if(size.equals(LARGE_FILE))
-    			file = new File("./data/large.zip");
+    			file = new File("./large.zip");
     		else if(size.equals(MEDIUM_FILE))
-    			file = new File("./data/medium.zip");
+    			file = new File("./medium.zip");
     		else if(size.equals(SMALL_FILE))
-    			file = new File("./data/small.zip");
+    			file = new File("./small.zip");
             
     		// Send real file size
             PrintStream p = new PrintStream(clientSock.getOutputStream());
