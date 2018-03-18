@@ -56,12 +56,18 @@ public class TCPClient extends Thread {
         // TODO: Change buffer size
         byte[] bytes = new byte[16*1024];
        
+        System.out.println("Starting to read file");
         int count;
         int i = 0;
+        long initTime = System.currentTimeMillis();
         while ((count = in.read(bytes)) > 0) {
             fOut.write(bytes, 0, count);
             System.out.println(count+ " " + i++);
         }
+        long totalTime = System.currentTimeMillis() - initTime;
+        System.out.println("Ended reading file");
+        System.out.println("Reading the file took " + totalTime + " ms");
+        
         p.close();
         fOut.close();
         in.close();
