@@ -1,20 +1,12 @@
 package TCPServer;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-
-import TCPClient.TCPClient;
-
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -74,34 +66,48 @@ public class TCPServer  extends Thread {
 	/* Methods */
 	public void sendFile(Socket clientSock) throws IOException {
         try {
+        	// Read requested size
     		Scanner sc = new Scanner(clientSock.getInputStream());
     		String size = sc.nextLine();
     		System.out.println(size);
     		
     		File file = null;
     		if(size.equals(LARGE_FILE))
-    			file = new File("./data/45MB.zip");
+    			file = new File("./data/large.zip");
     		else if(size.equals(MEDIUM_FILE))
-    			file = new File("./data/15MB.zip");
+    			file = new File("./data/medium.zip");
     		else if(size.equals(SMALL_FILE))
-    			file = new File("./data/3MB.zip");
+    			file = new File("./data/small.zip");
             
+    		// Send real file size
+            PrintStream p = new PrintStream(clientSock.getOutputStream());
+            int realSize = getRealFileSize(file);
+            p.println(realSize);
+            
+        	// Read requested size
+    		String confirmation = sc.nextLine();
+    		System.out.println(confirmation);
+    		
             // TODO: Buffer size
             byte[] bytes = new byte[16 * 1024];
-            InputStream in = new FileInputStream(file);
-            OutputStream out = clientSock.getOutputStream();
-
-            System.out.println("Se empezo a enviar archivo");
-            long initTime = System.currentTimeMillis();
     		// TODO: Message size
     		int messageSize = 8000;
+            
+            InputStream in = new FileInputStream(file);
+            OutputStream out = clientSock.getOutputStream();            
+            
+            System.out.println("Se empezo a enviar archivo");
+            long initTime = System.currentTimeMillis();
+
+            int accumulativeSize = 0;
     		int count;
     		while ((count = in.read(bytes, 0, messageSize)) > 0) {
+    			accumulativeSize += count;
     		 out.write(bytes, 0, count);
     		}
     		long totalTime = System.currentTimeMillis() - initTime;
     		System.out.println("Se termino de enviar archivo");
-    		System.out.println("Enviar el archivo tomo " + totalTime + " ms");
+    		System.out.println("Enviar el archivo tomo " + totalTime + " ms y se enviaron "  + accumulativeSize);
     		
     		sc.close();
             out.close();
@@ -110,6 +116,23 @@ public class TCPServer  extends Thread {
         } catch(Exception e) {
         	System.out.println("Error");
         }
+	}
+	
+	public int getRealFileSize(File file) throws Exception {
+        InputStream in = new FileInputStream(file);
+        
+        // TODO: Buffer size
+        byte[] bytes = new byte[16 * 1024];
+		// TODO: Message size
+		int messageSize = 8000;
+		
+		int count = 0;
+		int acumulativeSize = 0;
+		while ((count = in.read(bytes, 0, messageSize)) > 0) {
+   		 	acumulativeSize += count;
+   		}
+		
+		return acumulativeSize;
 	}
 	
 	/* Main */

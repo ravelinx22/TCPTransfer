@@ -70,7 +70,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		panelConexion.setBorder(new TitledBorder("Conexion"));
 		panelConexion.setLayout(new GridLayout(1, 7));
 
-		JTextField host = new JTextField("52.203.207.37");
+		JTextField host = new JTextField("localhost");
 		JTextField puerto = new JTextField(""+1988);
 		estado = new JTextField("Desconectado");
 		conectar = new JButton("Conectar");
@@ -172,7 +172,7 @@ public class Interfaz extends JFrame implements ListSelectionListener, ActionLis
 		{
 			if(conectar.getText().equals("Conectar")) {
 				estado.setText("Conectado");
-				fc = new TCPClient("52.203.207.37", 1988);
+				fc = new TCPClient("localhost", 1988);
 				conectar.setText("Desconectar");
 			}
 			else {
